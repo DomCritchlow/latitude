@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Latitude</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: #0a0a0b; font-family: system-ui; overflow: hidden; }
+    #map { width: 100%; height: 100%; }
+    .leaflet-control-attribution { display: none; }
+    .ui {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      z-index: 1000; display: flex; gap: 1rem; align-items: center;
+    }
+    .ui input, .ui button {
+      background: rgba(10,10,11,0.85); backdrop-filter: blur(12px);
+      border: 1px solid #333; color: #fafafa; border-radius: 8px;
+    }
+    .ui input {
+      font: inherit; font-size: clamp(1.5rem,6vw,2.5rem);
+      padding: 0.4em 0.6em; width: 5.5em; text-align: center; outline: none;
+    }
+    .ui button {
+      font-size: 1.25rem; width: 2.75rem; height: 2.75rem;
+      border-radius: 50%; cursor: pointer;
+    }
+    .dot {
+      width: 16px; height: 16px; background: #ff3b30;
+      border: 2px solid #fff; border-radius: 50%;
+      box-shadow: 0 0 12px rgba(255,59,48,0.8);
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="ui">
+    <input type="text" id="lat" placeholder="48.86°">
+    <button id="loc">📍</button>
+  </div>
+  <script>
+    const Z = 7;
+    let lat = 45, marker, line;
+    
+    const map = L.map('map', {
+      zoomControl: false, attributionControl: false,
+      zoom: Z, minZoom: Z, maxZoom: Z,
+      scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false, boxZoom: false
+    }).setView([lat, 0], Z);
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd'
+    }).addTo(map);
+    
+    const icon = L.divIcon({ className: 'dot', iconSize: [16,16], iconAnchor: [8,8] });
+    
+    map.on('drag', () => map.panTo([lat, map.getCenter().lng], { animate: false }));
+    
+    function go(newLat, lon) {
+      lat = Math.max(-85, Math.min(85, newLat));
+      lon = lon ?? map.getCenter().lng;
+      map.setView([lat, lon], Z);
+      if (line) map.removeLayer(line);
+      line = L.polyline([[lat,-1800],[lat,1800]], { color:'#ff3b30', weight:2, opacity:0.6 }).addTo(map);
+      marker ? marker.setLatLng([lat,lon]) : marker = L.marker([lat,lon], {icon}).addTo(map);
+      document.getElementById('lat').value = `${lat.toFixed(2)}°`;
+      history.replaceState(null, '', `?lat=${lat}`);
+    }
+    
+    document.getElementById('lat').addEventListener('change', e => {
+      const v = parseFloat(e.target.value.replace(/[°NSns]/gi, ''));
+      if (!isNaN(v) && v >= -90 && v <= 90) go(v);
+    });
+    
+    document.getElementById('loc').onclick = () => 
+      navigator.geolocation.getCurrentPosition(p => go(p.coords.latitude, p.coords.longitude));
+    
+    go(parseFloat(new URLSearchParams(location.search).get('lat')) || 45);
+  </script>
+</body>
+</html>
