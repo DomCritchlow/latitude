@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Latitude</title>
+  <title>Latitude</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -41,14 +41,14 @@
     <button id="loc">📍</button>
   </div>
   <script>
-    const Z = 7;
-    let lat = 45, marker, line;
+    const Z = 5;
+    let lat = 52.52, marker, line;
     
     const map = L.map('map', {
       zoomControl: false, attributionControl: false,
       zoom: Z, minZoom: Z, maxZoom: Z,
       scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false, boxZoom: false
-    }).setView([lat, 0], Z);
+    }).setView([lat, 13.4], Z);
     
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd'
@@ -77,7 +77,7 @@
     document.getElementById('loc').onclick = () => 
       navigator.geolocation.getCurrentPosition(p => go(p.coords.latitude, p.coords.longitude));
     
-    go(parseFloat(new URLSearchParams(location.search).get('lat')) || 45);
+    go(parseFloat(new URLSearchParams(location.search).get('lat')) || 52.52, 13.4);
   </script>
 </body>
 </html>
