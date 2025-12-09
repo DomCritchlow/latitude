@@ -81,13 +81,3 @@ Works on any static host. For GitHub Pages:
 1. Push to GitHub
 2. Settings → Pages → Deploy from `main` branch
 3. Done!
-
----
-
-## License
-
-MIT
-
----
-
-Built with curiosity about what's happening at your latitude, everywhere.
