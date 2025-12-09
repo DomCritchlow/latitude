@@ -4,7 +4,7 @@
 
 A minimal web app that draws your latitude line around the entire Earth, with real-time temperature data showing how warm or cold it is at every point along your parallel.
 
-![Screenshot](https://img.shields.io/badge/single_file-HTML-orange) ![License](https://img.shields.io/badge/license-MIT-blue)
+![Screenshot](https://img.shields.io/badge/single_file-HTML-orange)
 
 ---
 
