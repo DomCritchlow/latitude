@@ -1,6 +1,6 @@
 # Your Latitude, Every Longitude
 
-🌍 **[Live Demo → critchlow.us/latitude](http://critchlow.us/latitude/)**
+🌍 **[Live Demo → critchlow.us/latitude](https://critchlow.us/latitude/)**
 
 A minimal web app that draws your latitude line around the entire Earth, with real-time temperature data showing how warm or cold it is at every point along your parallel.
 
