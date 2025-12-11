@@ -4,14 +4,7 @@ A single-file web app that visualizes temperature differences around any latitud
 
 ![Single File](https://img.shields.io/badge/single_file-HTML-orange) ![License](https://img.shields.io/badge/license-MIT-blue)
 
----
-
-## What It Does
-
-Pick any point on the globe. The app draws your latitude line and shows real-time temperatures at 72 points around that parallel — visualized as a filled area chart directly on the map.
-
-- **Red areas rise above the line** → warmer than your location
-- **Blue areas dip below the line** → colder than your location
+![Screenshot](https://img.shields.io/badge/single_file-HTML-orange)
 
 ---
 
@@ -82,8 +75,5 @@ Works on any static host:
 
 **GitHub Pages:**
 1. Push to GitHub
-2. Settings → Pages → Deploy from `main`
-3. Done
-
-**Any static host:** Just upload `index.html`
-
+2. Settings → Pages → Deploy from `main` branch
+3. Done!
