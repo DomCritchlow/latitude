@@ -1,10 +1,17 @@
-# Your Latitude, Every Longitude
+# Latitude
 
-🌍 **[Live Demo → critchlow.us/latitude](https://critchlow.us/latitude/)**
+A single-file web app that visualizes temperature differences around any latitude line on Earth.
 
-A minimal web app that draws your latitude line around the entire Earth, with real-time temperature data showing how warm or cold it is at every point along your parallel.
+![Single File](https://img.shields.io/badge/single_file-HTML-orange) ![License](https://img.shields.io/badge/license-MIT-blue)
 
-![Screenshot](https://img.shields.io/badge/single_file-HTML-orange) ![License](https://img.shields.io/badge/license-MIT-blue)
+---
+
+## What It Does
+
+Pick any point on the globe. The app draws your latitude line and shows real-time temperatures at 72 points around that parallel — visualized as a filled area chart directly on the map.
+
+- **Red areas rise above the line** → warmer than your location
+- **Blue areas dip below the line** → colder than your location
 
 ---
 
@@ -12,82 +19,71 @@ A minimal web app that draws your latitude line around the entire Earth, with re
 
 | Feature | Description |
 |---------|-------------|
-| 📍 **Geolocation** | One tap to find your latitude |
-| 🌡️ **Temperature Graph** | Live temps along your latitude — red (warmer than you), blue (colder) |
-| ↕️ **Latitude Stepper** | Jump 5° north/south with arrow buttons |
-| 🔄 **Horizontal Pan** | Drag left/right to explore your parallel |
-| ⊙ **Center Tracking** | White dot + live longitude display as you pan |
-| 🔗 **Shareable URLs** | `?lat=52.52` links directly to any latitude |
-| 📱 **Mobile Friendly** | Touch-optimized with large tap targets |
+| 🗺️ **Free Pan** | Drag anywhere on the map — full latitude and longitude movement |
+| ⊙ **Set** | Drop a pin at the current center and load temperature data |
+| ⌖ **Me** | Jump to your current location via geolocation |
+| °C/°F **Toggle** | Switch between Celsius and Fahrenheit |
+| 📊 **Area Chart** | Filled visualization showing temperature deviation from baseline |
+| 🏷️ **Smart Labels** | Each point shows actual temp + difference (e.g., `15° ↑3`) |
+| 🔗 **Shareable URLs** | `?lat=52.52&lon=13.4` links directly to any location |
+| 📱 **Mobile Ready** | Touch-optimized with large tap targets |
 
 ---
 
 ## How It Works
 
-1. **Pick your latitude** — type it in, use geolocation, or tap ↑/↓
-2. **Explore horizontally** — drag to pan around the globe at that latitude
-3. **See the temperature profile** — the line rises (red) where it's warmer than you, dips (blue) where it's colder
-4. **Check the legend** — see your temp, global max/min, and current center longitude
-
----
-
-## Tech Stack
-
-- **Single HTML file** — no build step, no install
-- **Leaflet.js** — reliable map rendering (CDN)
-- **Open-Meteo API** — free weather data, no API key
-- **CartoDB Dark Matter** — stylish dark map tiles
+1. **Pan the map** to any location you're curious about
+2. **Tap "⊙ Set"** to drop a pin and fetch temperatures
+3. **Explore the visualization** — the filled chart shows temperature differences across your latitude
+4. **Check the legend** — see your temp, warmest point, and coldest point
 
 ---
 
 ## Temperature Visualization
 
-The app samples temperature at 24 points around your latitude (every 15° longitude) and draws a line that:
+The app samples temperature at **72 points** around your latitude (every 5° longitude) and draws:
 
-- **Sits on your latitude** at your location (baseline)
-- **Rises above** where it's warmer than you (red)
-- **Dips below** where it's colder than you (blue)
-- **Labels each point** with the actual temperature
+- A **gray baseline** at your selected latitude
+- **Filled areas** that rise (red) or dip (blue) based on temperature difference
+- A **white line** tracing the actual temperature values
+- **Labels** positioned outside the filled areas showing `temp° ↑/↓diff`
+
+The vertical scale is 0.1° latitude per 1°C temperature difference.
 
 ---
 
-## Example Latitudes
+## Tech Stack
+
+| Component | Choice |
+|-----------|--------|
+| Architecture | Single HTML file (~290 lines) |
+| Maps | Leaflet.js (CDN) |
+| Tiles | CartoDB Dark Matter |
+| Weather Data | Open-Meteo API (free, no key required) |
+| Build Step | None |
+
+---
+
+## Example Locations
 
 | Latitude | Location | What You'll See |
 |----------|----------|-----------------|
-| `52.52` | Berlin | Central Europe, crosses Canada, Russia |
-| `40.71` | New York | Mediterranean, crosses Japan, Spain |
-| `35.68` | Tokyo | Subtropics, crosses Los Angeles, Sahara |
-| `-33.87` | Sydney | Southern hemisphere, Cape Town, Buenos Aires |
+| `52.52` | Berlin | Central Europe → Canada → Russia |
+| `40.71` | New York | Mediterranean → Japan → Spain |
+| `35.68` | Tokyo | Subtropics → Los Angeles → Sahara |
+| `-33.87` | Sydney | Southern hemisphere → Cape Town → Buenos Aires |
 | `0` | Equator | Tropical belt around the world |
 
----
 
-## Local Development
 
-Just open `index.html` in a browser. Or serve it:
+## Deploy
 
-```bash
-python3 -m http.server 8080
-# Open http://localhost:8080
-```
+Works on any static host:
 
----
-
-## Deployment
-
-Works on any static host. For GitHub Pages:
-
+**GitHub Pages:**
 1. Push to GitHub
-2. Settings → Pages → Deploy from `main` branch
-3. Done!
+2. Settings → Pages → Deploy from `main`
+3. Done
 
----
+**Any static host:** Just upload `index.html`
 
-## License
-
-MIT
-
----
-
-Built with curiosity about what's happening at your latitude, everywhere.

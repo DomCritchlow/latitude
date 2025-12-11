@@ -3,111 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Latitude</title>
+  <title>Latitude</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { 
-      height: 100%; background: #0a0a0b; font-family: system-ui; overflow: hidden;
+      height: 100%; 
+      background: #0a0a0b; 
+      font-family: system-ui; 
+      overflow: hidden;
       -webkit-tap-highlight-color: transparent;
-      touch-action: pan-x;
     }
     #map { width: 100%; height: 100%; }
     .leaflet-control-attribution { display: none; }
+    
+    .pill {
+      background: rgba(10,10,11,0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid #333;
+      border-radius: 50px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: #fafafa;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
     .ui {
-      position: fixed; bottom: max(2rem, env(safe-area-inset-bottom, 0px)); 
-      left: 50%; transform: translateX(-50%);
-      z-index: 1000; display: flex; gap: 0.75rem; align-items: center;
-      padding: 0 1rem;
+      position: fixed;
+      bottom: max(2rem, env(safe-area-inset-bottom, 0px)); 
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      gap: 0.5rem;
     }
-    .ui input, .ui button {
-      background: rgba(10,10,11,0.85); backdrop-filter: blur(12px);
-      border: 1px solid #333; color: #fafafa; border-radius: 8px;
-    }
-    .input-group {
-      display: flex; align-items: stretch;
-      background: rgba(10,10,11,0.85); backdrop-filter: blur(12px);
-      border: 1px solid #333; border-radius: 12px; overflow: hidden;
-    }
-    .input-group input {
-      font: inherit; font-size: clamp(1.5rem,6vw,2rem);
-      padding: 0.5em; width: 5em; text-align: center; outline: none;
-      background: transparent; border: none; color: #fafafa;
-      -webkit-appearance: none;
-    }
-    .arrows {
-      display: flex; flex-direction: column; border-left: 1px solid #333;
-    }
-    .arrows button {
-      flex: 1; padding: 0 1em; font-size: 1.2rem;
-      background: transparent; border: none; border-radius: 0;
-      color: #888; cursor: pointer; width: auto; min-height: 44px;
+    .ui button {
+      flex: 1;
+      justify-content: center;
+      cursor: pointer;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+      transition: all 0.15s ease;
     }
-    .arrows button:hover, .arrows button:active { color: #fafafa; background: rgba(255,255,255,0.15); }
-    .arrows button:first-child { border-bottom: 1px solid #333; }
-    .ui > button {
-      font-size: 1.5rem; min-width: 56px; min-height: 56px;
-      border-radius: 50%; cursor: pointer;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
+    .ui button:hover { background: rgba(30,30,32,0.95); border-color: #444; }
+    .ui button:active { transform: scale(0.96); }
+    
+    .legend .row, .ui { width: 340px; }
+    .legend .row .pill, .ui button { flex: 1; justify-content: center; min-width: 0; }
+    
+    .legend {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .ui > button:active { background: rgba(255,255,255,0.15); }
+    .legend .row { display: flex; gap: 0.5rem; }
+    .legend .pill { color: #888; }
+    .legend .pill span { color: #fafafa; }
+    .legend .pill.coords { justify-content: center; }
+    .legend .pill.warm span { color: #ff3b30; }
+    .legend .pill.cold span { color: #3b82f6; }
+    
     .center-dot {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 12px; height: 12px; background: #fafafa;
-      border: 2px solid #333; border-radius: 50%;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: #fafafa;
+      border: 2px solid #333;
+      border-radius: 50%;
       box-shadow: 0 0 8px rgba(0,0,0,0.5);
-      z-index: 1000; pointer-events: none;
+      z-index: 1000;
+      pointer-events: none;
     }
     .dot {
-      width: 16px; height: 16px; background: #ff3b30;
-      border: 2px solid #fff; border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      background: #ff3b30;
+      border: 2px solid #fff;
+      border-radius: 50%;
       box-shadow: 0 0 12px rgba(255,59,48,0.8);
     }
+    
     .loading {
-      position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
-      z-index: 1000; background: rgba(10,10,11,0.85); backdrop-filter: blur(12px);
-      padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.85rem; color: #888;
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1001;
+      background: rgba(10,10,11,0.85);
+      backdrop-filter: blur(12px);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #888;
     }
-    .legend {
-      position: fixed; top: 1rem; right: 1rem; z-index: 1000;
-      background: rgba(10,10,11,0.85); backdrop-filter: blur(12px);
-      padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.75rem; color: #888;
-    }
-    .legend span { color: #fafafa; }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <div class="loading" id="loading" style="display:none">Loading temperatures...</div>
-  <div class="legend" id="legend" style="display:none">
-    <div>⊙ <span id="centerLon">—</span></div>
-    <div style="margin-top:0.5rem">📍 <span id="baseTemp">—</span> here</div>
-    <div>↑ <span id="maxTemp">—</span> warmest</div>
-    <div>↓ <span id="minTemp">—</span> coldest</div>
-  </div>
-  <div class="center-dot"></div>
-  <div class="ui">
-    <div class="input-group">
-      <input type="text" id="lat" placeholder="52.52°">
-      <div class="arrows">
-        <button id="up">↑</button>
-        <button id="down">↓</button>
-      </div>
+  
+  <div class="legend" id="legend">
+    <div class="pill coords">⊙ <span id="centerLat">—</span>, <span id="centerLon">—</span></div>
+    <div class="row">
+      <div class="pill">📍 <span id="baseTemp">—</span></div>
+      <div class="pill warm">↑ <span id="maxTemp">—</span></div>
+      <div class="pill cold">↓ <span id="minTemp">—</span></div>
     </div>
-    <button id="loc">📍</button>
   </div>
+  
+  <div class="center-dot"></div>
+  
+  <div class="ui">
+    <button class="pill" id="set">⊙ Set</button>
+    <button class="pill" id="loc">⌖ Me</button>
+    <button class="pill" id="unit">°C</button>
+  </div>
+  
   <script>
     const Z = 5;
     let lat = 52.52, marker, line, tempLayers = [];
+    let useFahrenheit = false;
+    let lastTempData = null, lastUserLon = null;
+    
+    const toF = c => c * 9/5 + 32;
+    const formatTemp = (c, showUnit = true) => {
+      const val = useFahrenheit ? toF(c) : c;
+      return showUnit ? `${val.toFixed(1)}${useFahrenheit ? '°F' : '°C'}` : Math.round(val);
+    };
     
     const map = L.map('map', {
-      zoomControl: false, attributionControl: false,
+      zoomControl: false,
+      attributionControl: false,
       zoom: Z, minZoom: Z, maxZoom: Z,
-      scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false, boxZoom: false
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      boxZoom: false
     }).setView([lat, 13.4], Z);
     
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -116,44 +163,30 @@
     
     const icon = L.divIcon({ className: 'dot', iconSize: [16,16], iconAnchor: [8,8] });
     
-    map.on('drag', () => map.panTo([lat, map.getCenter().lng], { animate: false }));
-    
-    function updateCenterLon() {
-      const lon = map.getCenter().lng;
-      // Normalize to -180 to 180
-      const normLon = ((lon + 180) % 360 + 360) % 360 - 180;
-      const dir = normLon >= 0 ? 'E' : 'W';
-      document.getElementById('centerLon').textContent = `${Math.abs(normLon).toFixed(2)}° ${dir}`;
+    function updateCoords() {
+      const { lat: latVal, lng: lonVal } = map.getCenter();
+      const normLon = ((lonVal + 180) % 360 + 360) % 360 - 180;
+      document.getElementById('centerLat').textContent = `${Math.abs(latVal).toFixed(2)}° ${latVal >= 0 ? 'N' : 'S'}`;
+      document.getElementById('centerLon').textContent = `${Math.abs(normLon).toFixed(2)}° ${normLon >= 0 ? 'E' : 'W'}`;
     }
+    map.on('move', updateCoords);
     
-    map.on('move', updateCenterLon);
-    
-    async function fetchTemperatures(lat) {
+    async function fetchTemperatures(lat, centerLon) {
       const points = [];
-      // Sample every 15° longitude = 24 points around the world
-      for (let lon = -180; lon < 180; lon += 15) {
-        points.push({ lat, lon });
+      for (let offset = -180; offset < 180; offset += 5) {
+        const drawLon = centerLon + offset;
+        const apiLon = ((drawLon + 180) % 360 + 360) % 360 - 180;
+        points.push({ lat, apiLon, drawLon });
       }
-      
-      // Open-Meteo allows batch requests
-      const lats = points.map(p => p.lat).join(',');
-      const lons = points.map(p => p.lon).join(',');
       
       try {
         const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=temperature_2m`
+          `https://api.open-meteo.com/v1/forecast?latitude=${points.map(p => p.lat).join(',')}&longitude=${points.map(p => p.apiLon).join(',')}&current=temperature_2m`
         );
         const data = await res.json();
-        
-        // Handle both single and multiple results
-        if (Array.isArray(data)) {
-          return points.map((p, i) => ({
-            ...p,
-            temp: data[i]?.current?.temperature_2m ?? null
-          }));
-        } else {
-          return [{ ...points[0], temp: data?.current?.temperature_2m ?? null }];
-        }
+        return Array.isArray(data) 
+          ? points.map((p, i) => ({ ...p, temp: data[i]?.current?.temperature_2m ?? null }))
+          : [{ ...points[0], temp: data?.current?.temperature_2m ?? null }];
       } catch (e) {
         console.error('Failed to fetch temperatures:', e);
         return points.map(p => ({ ...p, temp: null }));
@@ -161,112 +194,94 @@
     }
     
     function drawTemperatureLine(lat, tempData, userLon) {
-      // Clear old layers
+      lastTempData = tempData;
+      lastUserLon = userLon;
+      
       tempLayers.forEach(l => map.removeLayer(l));
       tempLayers = [];
       
       const validTemps = tempData.filter(d => d.temp !== null);
-      if (validTemps.length === 0) return;
+      if (!validTemps.length) return;
       
-      // Find temperature at user's location (closest point)
-      const userPoint = validTemps.reduce((closest, d) => 
-        Math.abs(d.lon - userLon) < Math.abs(closest.lon - userLon) ? d : closest
-      );
-      const baselineTemp = userPoint.temp;
-      
+      const centerPoint = validTemps.find(d => Math.abs(d.drawLon - userLon) < 1) || validTemps[Math.floor(validTemps.length / 2)];
+      const baselineTemp = centerPoint.temp;
       const minT = Math.min(...validTemps.map(d => d.temp));
       const maxT = Math.max(...validTemps.map(d => d.temp));
       
-      // Update legend
-      document.getElementById('legend').style.display = 'block';
-      document.getElementById('maxTemp').textContent = `${maxT.toFixed(1)}°C`;
-      document.getElementById('minTemp').textContent = `${minT.toFixed(1)}°C`;
-      document.getElementById('baseTemp').textContent = `${baselineTemp.toFixed(1)}°C`;
+      document.getElementById('baseTemp').textContent = formatTemp(baselineTemp);
+      document.getElementById('maxTemp').textContent = formatTemp(maxT);
+      document.getElementById('minTemp').textContent = formatTemp(minT);
       
-      // Scale: 1°C = 0.1° latitude offset
       const scale = 0.1;
+      const points = tempData.map(d => {
+        const diff = d.temp !== null ? d.temp - baselineTemp : 0;
+        return { lat: lat + diff * scale, lon: d.drawLon, temp: d.temp, diff };
+      });
       
-      // Build points with offsets
-      const points = tempData.map(d => ({
-        lat: lat + (d.temp !== null ? (d.temp - baselineTemp) * scale : 0),
-        lon: d.lon,
-        temp: d.temp,
-        isWarm: d.temp !== null && d.temp >= baselineTemp
-      }));
-      
-      // Draw segments between points with appropriate colors
-      for (let w = -2; w <= 2; w++) {
-        for (let i = 0; i < points.length; i++) {
-          const p1 = points[i];
-          const p2 = points[(i + 1) % points.length];
-          const avgWarm = p1.isWarm || p2.isWarm;
-          
-          const segment = L.polyline([
-            [p1.lat, p1.lon + w * 360],
-            [p2.lat, p2.lon + w * 360 + (i === points.length - 1 ? 360 : 0)]
-          ], {
-            color: avgWarm ? '#ff3b30' : '#3b82f6',
-            weight: 1.5,
-            opacity: 0.9
-          }).addTo(map);
-          tempLayers.push(segment);
-        }
+      for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i], p2 = points[i + 1];
+        const avgDiff = (p1.diff + p2.diff) / 2;
+        const color = avgDiff > 0 ? '#ff3b30' : '#3b82f6';
+        
+        tempLayers.push(L.polygon([
+          [p1.lat, p1.lon], [p2.lat, p2.lon], [lat, p2.lon], [lat, p1.lon]
+        ], { color, weight: 1, opacity: 0.8, fillColor: color, fillOpacity: 0.25 }).addTo(map));
       }
       
-      // Add temperature labels at each point
-      for (let w = -1; w <= 1; w++) {
-        points.forEach(p => {
-          if (p.temp === null) return;
-          const label = L.divIcon({
-            className: 'temp-label',
-            html: `<span style="
-              color: ${p.isWarm ? '#ff3b30' : '#3b82f6'};
-              font-size: 10px;
-              font-weight: 500;
-              text-shadow: 0 0 3px #0a0a0b, 0 0 6px #0a0a0b;
-            ">${Math.round(p.temp)}°</span>`,
-            iconSize: [30, 16],
-            iconAnchor: [15, -4]
-          });
-          const m = L.marker([p.lat, p.lon + w * 360], { icon: label }).addTo(map);
-          tempLayers.push(m);
+      tempLayers.push(L.polyline(points.map(p => [p.lat, p.lon]), {
+        color: '#fafafa', weight: 1.5, opacity: 0.6
+      }).addTo(map));
+      
+      points.forEach(p => {
+        if (p.temp === null) return;
+        const arrow = p.diff > 0 ? '↑' : p.diff < 0 ? '↓' : '';
+        const displayDiff = useFahrenheit ? Math.round(p.diff * 1.8) : Math.round(p.diff);
+        const diffText = p.diff === 0 ? '' : ` ${arrow}${Math.abs(displayDiff)}`;
+        const isWarm = p.diff > 0;
+        
+        const label = L.divIcon({
+          className: 'temp-label',
+          html: `<span style="color:${isWarm ? '#ff3b30' : '#3b82f6'};font-size:10px;font-weight:500;background:rgba(10,10,11,0.7);padding:1px 4px;border-radius:3px">${formatTemp(p.temp, false)}°${diffText}</span>`,
+          iconSize: [50, 18],
+          iconAnchor: [25, isWarm ? -4 : 20]
         });
-      }
+        tempLayers.push(L.marker([lat, p.lon], { icon: label }).addTo(map));
+      });
     }
     
-    async function go(newLat, lon) {
+    async function setLocation(newLat, lon, panTo = false) {
       lat = Math.max(-85, Math.min(85, newLat));
-      lon = lon ?? map.getCenter().lng;
-      map.setView([lat, lon], Z);
+      if (panTo) map.setView([lat, lon], Z);
       
       if (line) map.removeLayer(line);
       line = L.polyline([[lat,-1800],[lat,1800]], { color:'#888', weight:2, opacity:0.5 }).addTo(map);
       
-      marker ? marker.setLatLng([lat,lon]) : marker = L.marker([lat,lon], {icon}).addTo(map);
-      document.getElementById('lat').value = `${lat.toFixed(2)}°`;
-      document.getElementById('legend').style.display = 'block';
-      updateCenterLon();
-      history.replaceState(null, '', `?lat=${lat}`);
+      marker ? marker.setLatLng([lat, lon]) : marker = L.marker([lat, lon], { icon }).addTo(map);
+      updateCoords();
+      history.replaceState(null, '', `?lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}`);
       
-      // Fetch and draw temperatures
       document.getElementById('loading').style.display = 'block';
-      const temps = await fetchTemperatures(lat);
+      const temps = await fetchTemperatures(lat, lon);
       document.getElementById('loading').style.display = 'none';
       drawTemperatureLine(lat, temps, lon);
     }
     
-    document.getElementById('lat').addEventListener('change', e => {
-      const v = parseFloat(e.target.value.replace(/[°NSns]/gi, ''));
-      if (!isNaN(v) && v >= -90 && v <= 90) go(v);
-    });
+    document.getElementById('set').onclick = () => {
+      const center = map.getCenter();
+      setLocation(center.lat, center.lng);
+    };
     
     document.getElementById('loc').onclick = () => 
-      navigator.geolocation.getCurrentPosition(p => go(p.coords.latitude, p.coords.longitude));
+      navigator.geolocation.getCurrentPosition(p => setLocation(p.coords.latitude, p.coords.longitude, true));
     
-    document.getElementById('up').onclick = () => go(lat + 5);
-    document.getElementById('down').onclick = () => go(lat - 5);
+    document.getElementById('unit').onclick = () => {
+      useFahrenheit = !useFahrenheit;
+      document.getElementById('unit').textContent = useFahrenheit ? '°F' : '°C';
+      if (lastTempData) drawTemperatureLine(lat, lastTempData, lastUserLon);
+    };
     
-    go(parseFloat(new URLSearchParams(location.search).get('lat')) || 52.52, 13.4);
+    const params = new URLSearchParams(location.search);
+    setLocation(parseFloat(params.get('lat')) || 52.52, parseFloat(params.get('lon')) || 13.4, true);
   </script>
 </body>
 </html>
