@@ -4,8 +4,6 @@ A single-file web app that visualizes temperature differences around any latitud
 
 ![Single File](https://img.shields.io/badge/single_file-HTML-orange) ![License](https://img.shields.io/badge/license-MIT-blue)
 
-![Screenshot](https://img.shields.io/badge/single_file-HTML-orange)
-
 ---
 
 ## Features
@@ -45,7 +43,7 @@ The vertical scale is 0.1° latitude per 1°C temperature difference.
 
 ---
 
-## Tech Stack
+## Tech
 
 | Component | Choice |
 |-----------|--------|
