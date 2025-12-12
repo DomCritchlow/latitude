@@ -55,7 +55,7 @@
     .ui button:hover { background: rgba(30,30,32,0.95); border-color: #444; }
     .ui button:active { transform: scale(0.96); }
     
-    .legend .row, .ui { width: 340px; }
+    .legend .row, .ui, .legend .pill.coords { width: 340px; }
     .legend .row .pill, .ui button { flex: 1; justify-content: center; min-width: 0; }
     
     .legend {
@@ -75,6 +75,7 @@
     .legend .pill.coords { justify-content: center; }
     .legend .pill.warm span { color: #ff3b30; }
     .legend .pill.cold span { color: #3b82f6; }
+    .legend .pill.current { border-color: #555; box-shadow: 0 0 12px rgba(250,250,250,0.15); }
     
     .center-dot {
       position: fixed;
@@ -121,18 +122,18 @@
   <div class="legend" id="legend">
     <div class="pill coords">⊙ <span id="centerLat">—</span>, <span id="centerLon">—</span></div>
     <div class="row">
-      <div class="pill">📍 <span id="baseTemp">—</span></div>
-      <div class="pill warm">↑ <span id="maxTemp">—</span></div>
       <div class="pill cold">↓ <span id="minTemp">—</span></div>
+      <div class="pill current">📍 <span id="baseTemp">—</span></div>
+      <div class="pill warm">↑ <span id="maxTemp">—</span></div>
     </div>
   </div>
   
   <div class="center-dot"></div>
   
   <div class="ui">
-    <button class="pill" id="set">⊙ Set</button>
-    <button class="pill" id="loc">⌖ Me</button>
     <button class="pill" id="unit">°C</button>
+    <button class="pill" id="loc">⌖ Me</button>
+    <button class="pill" id="set">⊙ Set</button>
   </div>
   
   <script>
