@@ -49,7 +49,7 @@ The vertical scale is 0.1° latitude per 1°C temperature difference.
 |-----------|--------|
 | Architecture | Single HTML file (~290 lines) |
 | Maps | Leaflet.js (CDN) |
-| Tiles | CartoDB Dark Matter |
+| Tiles | OpenFreeMap Dark via MapLibre GL (no key required) |
 | Weather Data | Open-Meteo API (free, no key required) |
 | Build Step | None |
 
